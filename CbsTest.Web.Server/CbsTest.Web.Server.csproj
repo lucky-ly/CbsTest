@@ -11,8 +11,10 @@
   </ItemGroup>
 
   <ItemGroup>
-    <ProjectReference Include="..\Client\CbsTest.Web.Client.csproj" />
-    <ProjectReference Include="..\Shared\CbsTest.Web.Shared.csproj" />
+    <ProjectReference Include="..\CbsTest.Web.Infrastructure\CbsTest.Web.Infrastructure.csproj" />
+    <ProjectReference Include="..\CbsTest.Web.Interfaces\CbsTest.Web.Interfaces.csproj" />
+    <ProjectReference Include="..\CbsTest.Web.Client\CbsTest.Web.Client.csproj" />
+    <ProjectReference Include="..\CbsTest.Web.Shared\CbsTest.Web.Shared.csproj" />
   </ItemGroup>
 
 

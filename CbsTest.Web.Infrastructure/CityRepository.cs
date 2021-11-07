@@ -1,7 +1,10 @@
-﻿using CbsTest.Web.Server.Domain;
-using CbsTest.Web.Server.Interfaces;
+﻿using CbsTest.Domain;
+using CbsTest.Web.Interfaces;
+using System;
+using System.Collections.Generic;
+using System.Threading.Tasks;
 
-namespace CbsTest.Web.Server.Infrastructure
+namespace CbsTest.Web.Infrastructure
 {
     public class CityRepository : ICityRepository
     {

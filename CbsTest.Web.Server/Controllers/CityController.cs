@@ -1,12 +1,12 @@
-using CbsTest.Web.Server.Domain;
-using CbsTest.Web.Server.Interfaces;
-using CbsTest.Web.Shared.City;
 using Microsoft.AspNetCore.Mvc;
+using CbsTest.Domain;
+using CbsTest.Web.Interfaces;
+using CbsTest.Web.Shared.City;
 
 namespace CbsTest.Web.Server.Controllers
 {
     [ApiController]
-    [Route("[controller]")]
+    [Route("api/[controller]")]
     public class CityController : ControllerBase
     {
         private readonly ILogger<CityController> _logger;
@@ -35,7 +35,7 @@ namespace CbsTest.Web.Server.Controllers
         [HttpPost]
         public async Task<CityResponse> Post(NewCityRequest request)
         {
-            var newCity = new City(Guid.NewGuid(), request.Name, request.Population, DateOnly.FromDateTime(request.FoundationDate));
+            var newCity = City.Create(request.Name, request.Population, DateOnly.FromDateTime(request.FoundationDate));
             await _cityRepository.AddAsync(newCity);
             // send NewCityCreatedEvent
             return new CityResponse(newCity.Id, newCity.Name, newCity.Population, newCity.FoundationDate.ToDateTime(TimeOnly.MinValue));

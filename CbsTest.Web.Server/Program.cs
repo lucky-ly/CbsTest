@@ -1,5 +1,5 @@
-using CbsTest.Web.Server.Infrastructure;
-using CbsTest.Web.Server.Interfaces;
+using CbsTest.Web.Interfaces;
+using CbsTest.Web.Infrastructure;
 using Microsoft.AspNetCore.ResponseCompression;
 
 var builder = WebApplication.CreateBuilder(args);

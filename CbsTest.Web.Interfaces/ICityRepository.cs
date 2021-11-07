@@ -1,6 +1,9 @@
-﻿using CbsTest.Web.Server.Domain;
+﻿using System;
+using System.Collections.Generic;
+using System.Threading.Tasks;
+using CbsTest.Domain;
 
-namespace CbsTest.Web.Server.Interfaces
+namespace CbsTest.Web.Interfaces
 {
     public interface ICityRepository
     {

@@ -35,6 +35,6 @@ else
 
 	protected override async Task OnInitializedAsync()
     {
-        cities = await Http.GetFromJsonAsync<CityResponse[]>("city");
+        cities = await Http.GetFromJsonAsync<CityResponse[]>("api/city");
     }
 }
