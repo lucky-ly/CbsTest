@@ -1,0 +1,40 @@
+﻿@using CbsTest.Web.Shared.City
+@inject HttpClient Http
+
+<h3>Cities:</h3>
+
+@if (cities == null)
+{
+    <p><em>Loading...</em></p>
+}
+else
+{
+    <table class="table">
+        <thead>
+            <tr>
+                <th>Name</th>
+                <th>Population</th>
+                <th>Foundation Date</th>
+            </tr>
+        </thead>
+        <tbody>
+            @foreach (var item in cities)
+            {
+                <tr data-id="@item.Id" title="@item.Id">
+                    <td>@item.Name</td>
+                    <td>@item.Population</td>
+                    <td>@item.FoundationDate.ToShortDateString()</td>
+                </tr>
+            }
+        </tbody>
+    </table>
+}
+
+@code {
+    private CityResponse[]? cities;
+
+	protected override async Task OnInitializedAsync()
+    {
+        cities = await Http.GetFromJsonAsync<CityResponse[]>("city");
+    }
+}
