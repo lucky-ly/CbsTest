@@ -1,0 +1,38 @@
+﻿@using CbsTest.Web.Shared.City
+<tr>
+@if(isEditing)
+{
+    <td><input @bind-value="@City.Name"/></td>
+    <td><input type="number" @bind-value="@City.Population" min="0"/></td>
+    <td><input type="date" @bind-value="@City.FoundationDate"/></td>
+    <td> <button @onclick="SaveItem">Save</button> </td>
+}
+else
+{   
+    <td>@City.Name</td>
+    <td>@City.Population</td>
+    <td>@City.FoundationDate.ToShortDateString()</td>
+    <td> <button @onclick="EnableEdit">Edit</button> </td>
+}
+</tr>
+
+@code {
+    [Parameter]
+    public City City { get; set; }
+
+    [Parameter]
+    public EventCallback<City> OnChanged { get; set; }
+
+    private bool isEditing = false;
+
+    private void EnableEdit()
+    {
+        isEditing = true;
+    }
+
+    private void SaveItem()
+    {
+        isEditing = false;
+        OnChanged.InvokeAsync(City);
+    }
+}

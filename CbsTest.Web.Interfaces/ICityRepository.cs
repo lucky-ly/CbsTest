@@ -8,8 +8,9 @@ namespace CbsTest.Web.Interfaces
     public interface ICityRepository
     {
         Task<IEnumerable<City>> GetAllAsync();
-        Task<City> GetByIdAsync(Guid id);
+        Task<City?> GetByIdAsync(Guid id);
         Task AddAsync(City city);
-        Task UpdateAsync(City newCity);
+        Task UpdateAsync(City city);
+        Task DeleteAsync(Guid id);
     }
 }

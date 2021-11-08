@@ -1,6 +1,8 @@
+using Microsoft.AspNetCore.ResponseCompression;
+using Microsoft.EntityFrameworkCore;
 using CbsTest.Web.Interfaces;
 using CbsTest.Web.Infrastructure;
-using Microsoft.AspNetCore.ResponseCompression;
+using CbsTest.Web.Infrastructure.Database;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -9,6 +11,7 @@ var builder = WebApplication.CreateBuilder(args);
 builder.Services.AddControllersWithViews();
 builder.Services.AddRazorPages();
 builder.Services.AddScoped<ICityRepository, CityRepository>();
+builder.Services.AddDbContext<CityManagementContext>(o => o.UseInMemoryDatabase("CbsTestDb"));
 
 var app = builder.Build();
 

@@ -8,6 +8,7 @@ namespace CbsTest.Web.Infrastructure.Database
         public CityManagementContext(DbContextOptions<CityManagementContext> options)
             : base(options)
         {
+            Database.EnsureCreated();
         }
 
         public DbSet<City> Cities { get; set; }
@@ -15,6 +16,7 @@ namespace CbsTest.Web.Infrastructure.Database
         protected override void OnModelCreating(ModelBuilder builder)
         {
             builder.Entity<City>().HasKey(x => x.Id);
+            builder.Entity<City>().HasData(SampleData.GetCities());
         }
     }
 }

@@ -1,31 +1,50 @@
 ﻿using CbsTest.Domain;
+using CbsTest.Web.Infrastructure.Database;
 using CbsTest.Web.Interfaces;
+using Microsoft.EntityFrameworkCore;
 using System;
 using System.Collections.Generic;
+using System.Linq;
 using System.Threading.Tasks;
+using CityEntity = CbsTest.Web.Infrastructure.Database.Entities.City;
 
 namespace CbsTest.Web.Infrastructure
 {
     public class CityRepository : ICityRepository
     {
-        public Task AddAsync(City city)
+        private readonly CityManagementContext _context;
+
+        public CityRepository(CityManagementContext context)
         {
-            throw new NotImplementedException();
+            _context = context;
         }
 
         public async Task<IEnumerable<City>> GetAllAsync()
         {
-            return new[] { new City(Guid.NewGuid(), "WhatTheHellBurg", 666, DateOnly.Parse("1950-08-17")) };
+            return await _context.Cities.AsNoTracking().Select(x => new City(x.Id, x.Name, x.Population, x.FoundationDate)).ToArrayAsync();
         }
 
-        public Task<City> GetByIdAsync(Guid id)
+        public Task<City?> GetByIdAsync(Guid id)
         {
-            throw new NotImplementedException();
+            return _context.Cities.Where(x => x.Id == id).Select(x => new City(x.Id, x.Name, x.Population, x.FoundationDate)).FirstOrDefaultAsync();
         }
 
-        public Task UpdateAsync(City newCity)
+        public Task AddAsync(City city)
         {
-            throw new NotImplementedException();
+            _context.Cities.Add(new CityEntity(city.Id, city.Name, city.Population, city.FoundationDate));
+            return _context.SaveChangesAsync();
+        }
+
+        public Task DeleteAsync(Guid id)
+        {
+            _context.Cities.Remove(new CityEntity(id, "", 0, default));
+            return _context.SaveChangesAsync();
+        }
+
+        public Task UpdateAsync(City city)
+        {
+            _context.Cities.Update(new CityEntity(city.Id, city.Name, city.Population, city.FoundationDate));
+            return _context.SaveChangesAsync();
         }
     }
 }

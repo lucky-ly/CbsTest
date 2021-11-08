@@ -15,26 +15,30 @@ else
                 <th>Name</th>
                 <th>Population</th>
                 <th>Foundation Date</th>
+                <th></th>
             </tr>
         </thead>
         <tbody>
             @foreach (var item in cities)
             {
-                <tr data-id="@item.Id" title="@item.Id">
-                    <td>@item.Name</td>
-                    <td>@item.Population</td>
-                    <td>@item.FoundationDate.ToShortDateString()</td>
-                </tr>
+               <CityRowEditor City=@item OnChanged=ItemChanged/>
             }
         </tbody>
     </table>
 }
 
 @code {
-    private CityResponse[]? cities;
+    private City[]? cities;
 
-	protected override async Task OnInitializedAsync()
+    protected override async Task OnInitializedAsync()
     {
-        cities = await Http.GetFromJsonAsync<CityResponse[]>("api/city");
+        var response = (await Http.GetFromJsonAsync<CityResponse[]>("api/city")) ?? new CityResponse[0];
+        cities = response.Select(x => new City(x)).ToArray();
+    }
+
+    private Task ItemChanged(City item)
+    {
+        var request = item.ToUpdateRequest();
+        return Http.PutAsJsonAsync<UpdateCityRequest>($"api/city/{item.Id}", request);
     }
 }

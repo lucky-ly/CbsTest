@@ -1,7 +1,7 @@
 using Microsoft.AspNetCore.Mvc;
-using CbsTest.Domain;
 using CbsTest.Web.Interfaces;
 using CbsTest.Web.Shared.City;
+using City = CbsTest.Domain.City;
 
 namespace CbsTest.Web.Server.Controllers
 {
@@ -33,7 +33,7 @@ namespace CbsTest.Web.Server.Controllers
         }
 
         [HttpPost]
-        public async Task<CityResponse> Post(NewCityRequest request)
+        public async Task<CityResponse> Post(CreateCityRequest request)
         {
             var newCity = City.Create(request.Name, request.Population, DateOnly.FromDateTime(request.FoundationDate));
             await _cityRepository.AddAsync(newCity);
