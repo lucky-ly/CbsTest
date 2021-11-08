@@ -1,7 +1,7 @@
 ﻿@using CbsTest.Web.Shared.City
-@inject HttpClient Http
-
-<h3>Cities:</h3>
+@using Microsoft.AspNetCore.SignalR.Client
+@inject CityHttpClient Http
+@inject HubConnection CityHub
 
 @if (cities == null)
 {
@@ -23,52 +23,87 @@ else
             {
                <CityRowEditor City=@item OnChanged=ItemChangedHandler OnRemoved=ItemRemovedHandler/>
             }
-            <tr>
-                <td colspan="4"> <button @onclick="AddItem">Add</button> </td>
-            </tr>
+            <CityRowCreator OnCreated=ItemCreatedHandler/>
         </tbody>
     </table>
 }
 
 @code {
-    //todo: extract repository-like class
-    private List<City>? cities;
+    private List<City> cities;
 
     protected override async Task OnInitializedAsync()
     {
-        var response = (await Http.GetFromJsonAsync<CityResponse[]>("api/city")) ?? new CityResponse[0];
+        var response = await Http.GetAllAsync();
         cities = response.Select(x => new City(x)).ToList();
+
+        await ConnectLive();
     }
 
-    private Task ItemChangedHandler(City item)
+    private async Task ConnectLive()
     {
-        if (item.Id == Guid.Empty)
+        CityHub.On<CityResponse>(nameof(ICityClient.Update), ItemUpdatedExternallyHandler);
+        CityHub.On<CityResponse>(nameof(ICityClient.Create), ItemCreatedExternallyHandler);
+        CityHub.On<Guid>(nameof(ICityClient.Remove), ItemRemovedExternallyHandler);
+
+        await CityHub.StartAsync();
+    }
+
+    private void ItemUpdatedExternallyHandler(CityResponse city)
+    {
+        var existingCity = cities.FirstOrDefault(x => x.Id == city.Id);
+        var receivedCity = new City(city);
+
+        if(existingCity is null)
         {
-            var request = item.ToCreateRequest();
-            return Http.PostAsJsonAsync<CreateCityRequest>($"api/city", request);
+            AddItem(receivedCity);
         }
         else
         {
-            var request = item.ToUpdateRequest();
-            return Http.PutAsJsonAsync<UpdateCityRequest>($"api/city/{item.Id}", request);
+            cities[cities.IndexOf(existingCity)] = receivedCity;
         }
+
+        StateHasChanged();
     }
 
-    private Task ItemRemovedHandler(City item)
+    private void ItemCreatedExternallyHandler(CityResponse city)
+    {
+        AddItem(new City(city));
+        StateHasChanged();
+    }
+
+    private void ItemRemovedExternallyHandler(Guid id)
+    {
+        cities.RemoveAll(x => x.Id == id);
+        StateHasChanged();
+    }
+
+    private async Task ItemChangedHandler(City item)
+    {
+        await Http.UpdateAsync(item.ToUpdateRequest());
+    }
+
+    private async Task ItemRemovedHandler(City item)
     {
         cities.Remove(item);
 
         if (item.Id != Guid.Empty)
         {
-            var request = item.ToUpdateRequest();
-            return Http.DeleteAsync($"api/city/{item.Id}");
+            await Http.DeleteAsync(item.Id);
         }
-        return Task.CompletedTask;
     }
 
-    private void AddItem()
+    private async Task ItemCreatedHandler(City item)
     {
-        var newCity = new City("test", 0, DateTime.Now);
-        cities.Add(newCity);
+        var createdItem = await Http.CreateAsync(item.ToCreateRequest());
+        item.Id = createdItem.Id;
+
+        AddItem(item);
+    }
+
+    private void AddItem(City city)
+    {
+        if (cities.Exists(x => x.Id == city.Id)) return;
+
+        cities.Add(city);
     }
 }

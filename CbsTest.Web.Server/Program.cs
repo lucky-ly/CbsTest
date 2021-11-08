@@ -3,6 +3,7 @@ using Microsoft.EntityFrameworkCore;
 using CbsTest.Web.Interfaces;
 using CbsTest.Web.Infrastructure;
 using CbsTest.Web.Infrastructure.Database;
+using CbsTest.Web.Server.Hubs;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -10,6 +11,7 @@ var builder = WebApplication.CreateBuilder(args);
 
 builder.Services.AddControllersWithViews();
 builder.Services.AddRazorPages();
+builder.Services.AddSignalR();
 builder.Services.AddScoped<ICityRepository, CityRepository>();
 builder.Services.AddDbContext<CityManagementContext>(o => o.UseInMemoryDatabase("CbsTestDb"));
 
@@ -37,6 +39,7 @@ app.UseRouting();
 
 app.MapRazorPages();
 app.MapControllers();
+app.MapHub<CityHub>("/live/city");
 app.MapFallbackToFile("index.html");
 
 app.Run();
