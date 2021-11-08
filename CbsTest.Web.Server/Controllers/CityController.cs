@@ -49,5 +49,12 @@ namespace CbsTest.Web.Server.Controllers
             // send CityUpdatedEvent
             return new CityResponse(newCity.Id, newCity.Name, newCity.Population, newCity.FoundationDate.ToDateTime(TimeOnly.MinValue));
         }
+
+        [HttpDelete("{id}")]
+        public async Task Delete(Guid id)
+        {
+            await _cityRepository.DeleteAsync(id);
+            // send CityRemovedEvent
+        }
     }
 }

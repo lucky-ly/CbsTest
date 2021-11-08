@@ -5,14 +5,14 @@
     <td><input @bind-value="@City.Name"/></td>
     <td><input type="number" @bind-value="@City.Population" min="0"/></td>
     <td><input type="date" @bind-value="@City.FoundationDate"/></td>
-    <td> <button @onclick="SaveItem">Save</button> </td>
+    <td> <button @onclick="SaveItem">Save</button> <button @onclick="RemoveItem">Remove</button> </td>
 }
 else
 {   
     <td>@City.Name</td>
     <td>@City.Population</td>
     <td>@City.FoundationDate.ToShortDateString()</td>
-    <td> <button @onclick="EnableEdit">Edit</button> </td>
+    <td> <button @onclick="EnableEdit">Edit</button> <button @onclick="RemoveItem">Remove</button> </td>
 }
 </tr>
 
@@ -22,6 +22,9 @@ else
 
     [Parameter]
     public EventCallback<City> OnChanged { get; set; }
+
+    [Parameter]
+    public EventCallback<City> OnRemoved { get; set; }
 
     private bool isEditing = false;
 
@@ -34,5 +37,11 @@ else
     {
         isEditing = false;
         OnChanged.InvokeAsync(City);
+    }
+
+    private void RemoveItem()
+    {
+        isEditing = false;
+        OnRemoved.InvokeAsync(City);
     }
 }

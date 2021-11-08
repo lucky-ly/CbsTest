@@ -21,24 +21,54 @@ else
         <tbody>
             @foreach (var item in cities)
             {
-               <CityRowEditor City=@item OnChanged=ItemChanged/>
+               <CityRowEditor City=@item OnChanged=ItemChangedHandler OnRemoved=ItemRemovedHandler/>
             }
+            <tr>
+                <td colspan="4"> <button @onclick="AddItem">Add</button> </td>
+            </tr>
         </tbody>
     </table>
 }
 
 @code {
-    private City[]? cities;
+    //todo: extract repository-like class
+    private List<City>? cities;
 
     protected override async Task OnInitializedAsync()
     {
         var response = (await Http.GetFromJsonAsync<CityResponse[]>("api/city")) ?? new CityResponse[0];
-        cities = response.Select(x => new City(x)).ToArray();
+        cities = response.Select(x => new City(x)).ToList();
     }
 
-    private Task ItemChanged(City item)
+    private Task ItemChangedHandler(City item)
     {
-        var request = item.ToUpdateRequest();
-        return Http.PutAsJsonAsync<UpdateCityRequest>($"api/city/{item.Id}", request);
+        if (item.Id == Guid.Empty)
+        {
+            var request = item.ToCreateRequest();
+            return Http.PostAsJsonAsync<CreateCityRequest>($"api/city", request);
+        }
+        else
+        {
+            var request = item.ToUpdateRequest();
+            return Http.PutAsJsonAsync<UpdateCityRequest>($"api/city/{item.Id}", request);
+        }
+    }
+
+    private Task ItemRemovedHandler(City item)
+    {
+        cities.Remove(item);
+
+        if (item.Id != Guid.Empty)
+        {
+            var request = item.ToUpdateRequest();
+            return Http.DeleteAsync($"api/city/{item.Id}");
+        }
+        return Task.CompletedTask;
+    }
+
+    private void AddItem()
+    {
+        var newCity = new City("test", 0, DateTime.Now);
+        cities.Add(newCity);
     }
 }
