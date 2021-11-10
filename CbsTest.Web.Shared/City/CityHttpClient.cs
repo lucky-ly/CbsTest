@@ -18,14 +18,14 @@ namespace CbsTest.Web.Shared.City
 
         public async Task<CityResponse> CreateAsync(CreateCityRequest request)
         {
-            var response = await _httpClient.PostAsJsonAsync<CreateCityRequest>($"api/city", request);
+            var response = await _httpClient.PostAsJsonAsync($"api/city", request);
             var returnValue = await response.Content.ReadFromJsonAsync<CityResponse>();
             return returnValue;
         }
 
         public Task UpdateAsync(UpdateCityRequest request)
         {
-            return _httpClient.PutAsJsonAsync<UpdateCityRequest>($"api/city/{request.Id}", request);
+            return _httpClient.PutAsJsonAsync($"api/city/{request.Id}", request);
         }
 
         public Task DeleteAsync(Guid id)

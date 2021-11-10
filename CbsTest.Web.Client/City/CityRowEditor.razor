@@ -2,17 +2,17 @@
 <tr>
 @if(isEditing)
 {
-    <td><input @bind-value="@City.Name"/></td>
-    <td><input type="number" @bind-value="@City.Population" min="0"/></td>
-    <td><input type="date" @bind-value="@City.FoundationDate"/></td>
-    <td> <button @onclick="SaveItem">Save</button> <button @onclick="RemoveItem">Remove</button> </td>
+    <td><input class="form-control" @bind-value="@City.Name"/></td>
+    <td><input class="form-control" type="number" @bind-value="@City.Population" min="0"/></td>
+    <td><input class="form-control" type="date" @bind-value="@City.FoundationDate"/></td>
+    <td> <button class="btn btn-outline-success" @onclick="SaveItem">Save</button> <button class="btn btn-outline-danger" @onclick="RemoveItem">Remove</button> </td>
 }
 else
 {   
     <td>@City.Name</td>
     <td>@City.Population</td>
     <td>@City.FoundationDate.ToShortDateString()</td>
-    <td> <button @onclick="EnableEdit">Edit</button> <button @onclick="RemoveItem">Remove</button> </td>
+    <td> <button class="btn btn-outline-primary" @onclick="EnableEdit">Edit</button> <button class="btn btn-outline-danger" @onclick="RemoveItem">Remove</button> </td>
 }
 </tr>
 

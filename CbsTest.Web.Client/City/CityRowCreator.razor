@@ -1,0 +1,37 @@
+﻿@using CbsTest.Web.Shared.City
+<tr>
+@if(item is null)
+{
+    <td colspan="4"> <button class="btn btn-primary" @onclick="EnableEdit">Add</button> </td>
+}
+else
+{
+    <td><input class="form-control" @bind-value="@item.Name"/></td>
+    <td><input class="form-control" type="number" @bind-value="@item.Population" min="0"/></td>
+    <td><input class="form-control" type="date" @bind-value="@item.FoundationDate"/></td>
+    <td> <button class="btn btn-outline-success" @onclick="SaveItem">Add</button> <button class="btn btn-outline-secondary" @onclick="Cancel">Cancel</button> </td>
+}
+</tr>
+
+@code {
+    [Parameter]
+    public EventCallback<City> OnCreated { get; set; }
+
+    private City item;
+
+    private async Task EnableEdit()
+    {
+        item = new City();
+    }
+
+    private async Task SaveItem()
+    {
+        await OnCreated.InvokeAsync(item);
+        item = null;
+    }
+
+    private async Task Cancel()
+    {
+        item = null;
+    }
+}

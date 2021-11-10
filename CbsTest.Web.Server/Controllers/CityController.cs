@@ -11,13 +11,11 @@ namespace CbsTest.Web.Server.Controllers
     [Route("api/[controller]")]
     public class CityController : ControllerBase
     {
-        private readonly ILogger<CityController> _logger;
         private readonly ICityRepository _cityRepository;
         private readonly IHubContext<CityHub, ICityClient> _hubContext;
 
-        public CityController(ILogger<CityController> logger, ICityRepository cityRepository, IHubContext<CityHub, ICityClient> hubContext)
+        public CityController( ICityRepository cityRepository, IHubContext<CityHub, ICityClient> hubContext)
         {
-            _logger = logger;
             _cityRepository = cityRepository;
             _hubContext = hubContext;
         }
